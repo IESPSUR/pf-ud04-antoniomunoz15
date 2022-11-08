@@ -5,13 +5,14 @@ from django.utils import timezone
 
 # Create your models here.
 class Marca(models.Model):
-    nombre = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=200, primary_key="true")
 
 
 
 class Producto(models.Model):
-    modelo = models.CharField(max_length=200)
+    modelo = models.CharField(max_length=200, primary_key="true")
     nombre = models.CharField(max_length=200)
+    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
     precio = models.IntegerField()
     unidades = models.IntegerField()
     detalles = models.CharField(max_length=500)

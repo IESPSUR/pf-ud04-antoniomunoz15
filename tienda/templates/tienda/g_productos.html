@@ -7,10 +7,19 @@
 <body>
     <h1>Listado de productos</h1>
     <ul>
-         {% for producto in productos %}
-             <li>{{producto.nombre}} {{producto.marca}} {{producto.unidades}} unidades {{producto.precio}}€</li>
+         {% for listado in listado %}
+             <li>{{listado.nombre}} {{listado.marca}} {{listado.unidades}} unidades {{listado.precio}}€</li>
          {%endfor%}
     </ul>
+
+
+    <form action="" method="POST"></form>
+        {% csrf_token %}
+            {% if mensaje %}
+                <p>Producto guardado</p>
+            {% endif %}
+        {{ form }}
+    </form>
 
 </body>
 </html>
