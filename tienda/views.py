@@ -1,20 +1,28 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Producto
-from .forms import F_prod
+from .forms import ProductoForm
 
 # Create your views here.
 def welcome(request):
-    return render(request,'tienda/index.html', {})
+    return render(request, 'tienda/index.html', {})
+def listado(request):
+    productos= Producto.objects.all()
+    return render(request, 'tienda/listado.html', {'productos': productos})
+def edicion(request, id):
+    producto= Producto.objects.get(id=id)
+    formulario = ProductoForm(request.POST or None, request.FILES or None, instance=producto)
+    if formulario.is_valid() and request.POST:
+        formulario.save()
+        return redirect('listado')
+    return render(request, 'tienda/edicion.html', {'formulario': formulario})
+def nuevo(request):
+    formulario = ProductoForm(request.POST or None, request.FILES or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('listado')
+    return render(request, 'tienda/crear.html', {'formulario': formulario})
 
-def g_productos(request):
-    productos = F_prod()
-    return render(request,'tienda/g_productos.html', {'form':productos})
-
-def procesar_formulario(request):
-   listado = Producto.objects.all()
-   productos = F_prod()
-   if productos.is_valid():
-       productos.save()
-       productos = F_prod()
-
-   return render(request,'tienda/g_productos.html)',{"listado":listado,'form':productos, "mensaje": 'OK'})
+def eliminar(request, id):
+    producto = Producto.objects.get(id=id)
+    producto.delete()
+    return redirect('listado')

@@ -1,0 +1,16 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+    <h1>Crear un producto</h1>
+    <div class="card">
+        <div class="card-header">
+           Crear un Producto
+        </div>
+        <div class="card-body">
+            <h4 class="card-title">Datos del producto</h4>
+            {% include 'tienda/form.html' %}
+        </div>
+        <div class="card-footer text-muted">
+            Footer
+        </div>
+    </div>
+{% endblock %}

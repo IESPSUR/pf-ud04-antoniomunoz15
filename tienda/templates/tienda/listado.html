@@ -1,0 +1,32 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+    <table class="table">
+      <thead>
+        <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Unidades</th>
+            <th scope="col">Detalles</th>
+            <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for productos in productos %}
+        <tr>
+            <td>{{ productos.id }}</td>
+            <td>{{ productos.modelo }}</td>
+            <td>{{ productos.marca }}</td>
+            <td>{{ productos.precio }}</td>
+            <td>{{ productos.unidades }}</td>
+            <td>{{ productos.detalles }}</td>
+            <td>
+                <a name="" class="btn btn-info" id="" href="{% url 'edicion' productos.id %}" role="button">Editar</a>
+                <a name="" class="btn btn-danger" id="" href="{% url 'eliminar' productos.id %}" role="button">Borrar</a>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}
