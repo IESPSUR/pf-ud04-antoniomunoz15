@@ -26,3 +26,15 @@ def eliminar(request, id):
     producto = Producto.objects.get(id=id)
     producto.delete()
     return redirect('listado')
+
+def compra(request):
+    productos = Producto.objects.all()
+    return render(request, 'tienda/realizar_compra.html', {'productos': productos})
+
+def realizar_compra(request, id):
+    producto = Producto.objects.get(id=id)
+    formulario = ProductoForm(request.POST or None, request.FILES or None, instance=producto)
+    if formulario.is_valid() and request.POST:
+        formulario.save()
+        return redirect('listado')
+    return render(request, 'tienda/Detalles_Compra_Producto.html', {'formulario': formulario})

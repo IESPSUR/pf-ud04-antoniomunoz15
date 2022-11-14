@@ -5,17 +5,20 @@ from django.utils import timezone
 
 # Create your models here.
 class Marca(models.Model):
-    nombre = models.CharField(max_length=200, primary_key='true')
+    nombre = models.CharField(max_length=200, unique='true')
+
+    def __str__(self):
+        return self.nombre
 
 
 
 class Producto(models.Model):
     modelo = models.CharField(max_length=200)
     nombre = models.CharField(max_length=200)
-    marca = models.ForeignKey(Marca, on_delete=models.CASCADE)
-    precio = models.IntegerField()
-    unidades = models.IntegerField()
-    detalles = models.CharField(max_length=500)
+    marca = models.ForeignKey(Marca, models.PROTECT)
+    precio = models.DecimalField(max_digits=12, decimal_places=2)
+    unidades = models.PositiveIntegerField()
+    detalles = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
         return '{} {}'.format(self.nombre, self.marca)
@@ -25,8 +28,9 @@ class Producto(models.Model):
 
 
 class Compra(models.Model):
-    fecha = models.CharField(max_length=200)
-    unidades = models.CharField(max_length=200)
-    importe = models.CharField(max_length=200)
-
+    fecha = models.DateTimeField(default=timezone.now)
+    unidades = models.PositiveIntegerField()
+    importe = models.DecimalField(max_digits=12, decimal_places=2)
+    producto = models.ForeignKey(Producto, models.PROTECT)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
