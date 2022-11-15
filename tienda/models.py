@@ -34,3 +34,5 @@ class Compra(models.Model):
     producto = models.ForeignKey(Producto, models.PROTECT)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
 
+    def __str__(self):
+        return '{} {}'.format(self.fecha, self.unidades)

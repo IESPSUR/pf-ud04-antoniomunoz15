@@ -1,0 +1,35 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+ <div class="card-header">
+        <a name="" id="" class="btn btn-success" href="{% url 'nuevo' %}" role="button">Agregar Producto</a>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+            <th scope="col">Modelo</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Marca</th>
+            <th scope="col">Precio</th>
+            <th scope="col">Unidades</th>
+            <th scope="col">Detalles</th>
+            <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for productos in productos %}
+        <tr>
+            <td>{{ productos.id }}</td>
+            <td>{{ productos.modelo }}</td>
+            <td>{{ productos.marca }}</td>
+            <td>{{ productos.precio }}€</td>
+            <td>{{ productos.unidades }}</td>
+            <td>{{ productos.detalles }}</td>
+            <td>
+                <a name="" class="btn btn-success" id="" href="{% url 'compraProd' productos.id %}" role="button">Comprar</a>
+            </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+{% endblock %}
