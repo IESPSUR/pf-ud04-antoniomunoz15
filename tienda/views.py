@@ -23,7 +23,7 @@ def edicion(request, id):
     if formulario.is_valid() and request.POST:
         formulario.save()
         return redirect('listado')
-    return render(request, 'tienda/edicion.html', {'formulario': formulario})
+    return render(request, 'tienda/CRUDS/edicion.html', {'formulario': formulario})
 
 @staff_member_required
 def nuevo(request):
@@ -31,7 +31,7 @@ def nuevo(request):
     if formulario.is_valid():
         formulario.save()
         return redirect('listado')
-    return render(request, 'tienda/crear.html', {'formulario': formulario})
+    return render(request, 'tienda/CRUDS/crear.html', {'formulario': formulario})
 
 @staff_member_required
 def eliminar(request, id):
@@ -41,7 +41,7 @@ def eliminar(request, id):
 
 def comprador(request):
     productos = Producto.objects.all()
-    return render(request, 'tienda/compra.html', {'productos': productos})
+    return render(request, 'tienda/compras/compra.html', {'productos': productos})
 
 @transaction.atomic
 @login_required
@@ -68,9 +68,9 @@ def realizar_compra(request, id):
                 compra.save()
 
                 return redirect('comprador')
-    return render(request, 'tienda/compra_producto.html', {'formulario': formulario})
+    return render(request, 'tienda/compras/compra_producto.html', {'formulario': formulario})
 def listado_informe(request):
-    return render(request, 'tienda/informes.html', {})
+    return render(request, 'tienda/informes/informes.html', {})
 
 def informes_productos_marca(request):
     marca = request.GET.get('marca')
@@ -81,7 +81,7 @@ def informes_productos_marca(request):
     else:
         formulario = MarcaForm()
         contexto = {'formulario': formulario}
-    return render(request, 'tienda/productos_marca.html', contexto)
+    return render(request, 'tienda/informes/productos_marca.html', contexto)
 
 def informes_productos_usuario(request):
     username = request.GET.get('user')
@@ -92,14 +92,14 @@ def informes_productos_usuario(request):
     else:
         formulario = PersonaForm()
         contexto = {'formulario': formulario}
-    return render(request, 'tienda/compras_usuario.html', contexto)
+    return render(request, 'tienda/informes/compras_usuario.html', contexto)
 
 def informes_topten_vendidos(request):
     productos = Producto.objects.annotate(sum_ventas=Sum('compra__unidades'),
                                           sum_importes=Sum('compra__importe')).order_by('-sum_ventas')[:10]
-    return render(request,'tienda/productos_topten_vendidos.html', {'productos':productos})
+    return render(request, 'tienda/informes/productos_topten_vendidos.html', {'productos':productos})
 
 def informes_topten_clientes(request):
     clientes = User.objects.annotate(importe_compras=Sum('compra__importe'),
                                           total_compra=Count('compra')).order_by('-importe_compras')[:10]
-    return render(request,'tienda/topten_mejores_clientes.html', {'clientes':clientes})
+    return render(request, 'tienda/informes/topten_mejores_clientes.html', {'clientes':clientes})
