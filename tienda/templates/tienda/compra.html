@@ -25,7 +25,7 @@
             <td>{{ productos.unidades }}</td>
             <td>{{ productos.detalles }}</td>
             <td>
-                <a name="" class="btn btn-success" id="" href="{% url 'compraProd' productos.id %}" role="button">Comprar</a>
+                <a name="" class="btn btn-success" id="" href="{% url 'realizar_compra' productos.id %}" role="button">Comprar</a>
             </td>
         </tr>
         {% endfor %}

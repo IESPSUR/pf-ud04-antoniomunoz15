@@ -1,6 +1,11 @@
+import datetime
+
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Producto
+from .models import Compra
 from .forms import ProductoForm
 from .forms import CompraForm
 
@@ -33,18 +38,35 @@ def eliminar(request, id):
     producto.delete()
     return redirect('listado')
 
-def compra(request):
+def comprador(request):
     productos = Producto.objects.all()
     return render(request, 'tienda/compra.html', {'productos': productos})
 
+@transaction.atomic
+@login_required
 def realizar_compra(request, id):
+
     producto = get_object_or_404(Producto, id=id)
     formulario = CompraForm(request.POST)
+
     if request.method=='POST':
         if formulario.is_valid():
-            cantidad= formulario.cleaned_data['cantidad']
-            if(producto.unidades > cantidad):
-                producto.unidades = producto.unidades - cantidad
+            unidades= formulario.cleaned_data['unidades']
+            total = producto.precio * int(unidades)
+
+            if(producto.unidades > unidades):
+                producto.unidades = producto.unidades - unidades
                 producto.save()
-                return redirect('compra')
+
+                compra = Compra()
+                compra.producto = producto
+                compra.unidades = unidades
+                compra.user= request.user
+                compra.fecha= datetime.datetime.now()
+                compra.importe=unidades * producto.precio
+                compra.save()
+
+                return redirect('comprador')
     return render(request, 'tienda/compra_producto.html', {'formulario': formulario})
+def listado_informe(request):
+    return render(request, 'tienda/informes.html', {})

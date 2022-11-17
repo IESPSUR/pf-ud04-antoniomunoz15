@@ -7,5 +7,5 @@ class ProductoForm(forms.ModelForm):
         fields = '__all__'
 
 class CompraForm(forms.Form):
-    cantidad = forms.IntegerField(required=True)
+    unidades = forms.IntegerField(min_value=1)
 
