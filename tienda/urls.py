@@ -12,4 +12,5 @@ urlpatterns = [
     path('tienda/listadocompra/', views.comprador, name='comprador'),
     path('tienda/realizar_compra/<int:id>', views.realizar_compra, name='realizar_compra'),
     path('tienda/listadoInformes/', views.listado_informe, name='listado_informes'),
+    path('tienda/listadoInformes/productosPorMarca', views.informes_productos_marca, name='listado_marca'),
 ]

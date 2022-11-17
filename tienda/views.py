@@ -6,8 +6,7 @@ from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Producto
 from .models import Compra
-from .forms import ProductoForm
-from .forms import CompraForm
+from .forms import *
 
 # Create your views here.
 def welcome(request):
@@ -70,3 +69,14 @@ def realizar_compra(request, id):
     return render(request, 'tienda/compra_producto.html', {'formulario': formulario})
 def listado_informe(request):
     return render(request, 'tienda/informes.html', {})
+
+def informes_productos_marca(request):
+    marca = request.GET.get('marca')
+    if marca:
+        formulario = MarcaForm(request.GET)
+        productos = Producto.objects.all().filter(marca=marca)
+        contexto = {'productos':productos, 'formulario':formulario}
+    else:
+        formulario = MarcaForm()
+        contexto = {'formulario': formulario}
+    return render(request, 'tienda/productos_marca.html', contexto)
