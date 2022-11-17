@@ -5,34 +5,30 @@
         {{ formulario }}
         <input type="submit" value="Consultar">
     </form>
-    {% if productos %}
+    {% if compras %}
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Modelo</th>
-                    <th>Marca</th>
-                    <th>Stock</th>
-                    <th>Precio</th>
+                    <th>Producto</th>
+                    <th>Fecha</th>
+                    <th>Importe</th>
+                    <th>Unidades</th>
                 </tr>
             </thead>
             <tbody>
-            {% for producto in productos %}
+            {% for compra in compras %}
                 <tr>
                     <td>
-                        {{ producto.nombre }}
+                        {{ compra.producto }}
                     </td>
                     <td>
-                        {{ producto.modelo }}
+                        {{ compra.fecha }}
                     </td>
                     <td>
-                        {{ producto.marca }}
+                        {{ compra.importe }}
                     </td>
                     <td>
-                        {{ producto.unidades }}
-                    </td>
-                     <td>
-                        {{ producto.precio }}
+                        {{ compra.unidades }}
                     </td>
                 </tr>
             {% endfor %}

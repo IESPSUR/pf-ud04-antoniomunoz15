@@ -1,24 +1,19 @@
 {% extends 'tienda/base.html' %}
 {% block content %}
-    <h2>Productos por marca</h2>
-    <form method="get">
-        {{ formulario }}
-        <input type="submit" value="Consultar">
-    </form>
+    <h2>Top 10 productos</h2>
     {% if productos %}
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Modelo</th>
-                    <th>Marca</th>
-                    <th>Stock</th>
-                    <th>Precio</th>
+                    <th>Producto</th>
+                    <th>Fecha</th>
+                    <th>Importe</th>
+                    <th>Unidades</th>
                 </tr>
             </thead>
             <tbody>
             {% for producto in productos %}
-                <tr>
+                 <tr>
                     <td>
                         {{ producto.nombre }}
                     </td>

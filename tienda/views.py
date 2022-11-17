@@ -2,10 +2,12 @@ import datetime
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Producto
 from .models import Compra
+from django.db.models import Sum, Count
 from .forms import *
 
 # Create your views here.
@@ -80,3 +82,24 @@ def informes_productos_marca(request):
         formulario = MarcaForm()
         contexto = {'formulario': formulario}
     return render(request, 'tienda/productos_marca.html', contexto)
+
+def informes_productos_usuario(request):
+    username = request.GET.get('user')
+    if username:
+        formulario = PersonaForm(request.GET)
+        compras = Compra.objects.all().filter(user=request.user)
+        contexto = {'compras':compras, 'formulario':formulario}
+    else:
+        formulario = PersonaForm()
+        contexto = {'formulario': formulario}
+    return render(request, 'tienda/compras_usuario.html', contexto)
+
+def informes_topten_vendidos(request):
+    productos = Producto.objects.annotate(sum_ventas=Sum('compra__unidades'),
+                                          sum_importes=Sum('compra__importe')).order_by('-sum_ventas')[:10]
+    return render(request,'tienda/productos_topten_vendidos.html', {'productos':productos})
+
+def informes_topten_clientes(request):
+    clientes = User.objects.annotate(importe_compras=Sum('compra__importe'),
+                                          total_compra=Count('compra')).order_by('-importe_compras')[:10]
+    return render(request,'tienda/topten_mejores_clientes.html', {'clientes':clientes})

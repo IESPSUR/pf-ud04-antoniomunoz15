@@ -1,0 +1,26 @@
+{% extends 'tienda/base.html' %}
+{% block content %}
+    <h4>Mejores Clientes</h4>
+    {% if clientes %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>id del cliente</th>
+                    <th>Nombre de usuario</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cliente in clientes %}
+                 <tr>
+                    <td>
+                        {{ cliente.id }}
+                    </td>
+                    <td>
+                         {{ cliente.username }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
