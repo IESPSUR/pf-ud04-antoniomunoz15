@@ -1,22 +1,26 @@
 {% extends 'tienda/base.html' %}
 {% block content %}
     <h4>Mejores Clientes</h4>
-    {% if clientes %}
+    {% if recompras %}
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>id del cliente</th>
-                    <th>Nombre de usuario</th>
+                    <th>Importe</th>
                 </tr>
             </thead>
             <tbody>
-            {% for cliente in clientes %}
+            {% for compra in recompras %}
                  <tr>
                     <td>
-                        {{ cliente.id }}
+                        {% for cliente in clientes %}
+                            {% if cliente.id == compra.user %}
+                                {{ cliente.username }}
+                            {% endif %}
+                        {% endfor %}
                     </td>
                     <td>
-                         {{ cliente.username }}
+                        {{ compra.sum_compras }}€
                     </td>
                 </tr>
             {% endfor %}

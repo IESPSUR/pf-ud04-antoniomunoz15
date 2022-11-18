@@ -1,14 +1,18 @@
 import datetime
 
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Producto
 from .models import Compra
 from django.db.models import Sum, Count
 from .forms import *
+from django.contrib import  messages
 
 # Create your views here.
 def welcome(request):
@@ -46,19 +50,17 @@ def comprador(request):
 @transaction.atomic
 @login_required
 def realizar_compra(request, id):
-
+    """Vista para calcular el recuento de la compra del stock con las unidades que compra el cliente"""
     producto = get_object_or_404(Producto, id=id)
     formulario = CompraForm(request.POST)
 
     if request.method=='POST':
         if formulario.is_valid():
             unidades= formulario.cleaned_data['unidades']
-            total = producto.precio * int(unidades)
-
+            #Comprobacion de que haya stock y guardado de compra#
             if(producto.unidades > unidades):
                 producto.unidades = producto.unidades - unidades
                 producto.save()
-
                 compra = Compra()
                 compra.producto = producto
                 compra.unidades = unidades
@@ -66,28 +68,35 @@ def realizar_compra(request, id):
                 compra.fecha= datetime.datetime.now()
                 compra.importe=unidades * producto.precio
                 compra.save()
-
-                return redirect('comprador')
+            else: # Control de errores en el caso de que se pase #
+                raise ValidationError('No hay suficientes unidades')
+            return redirect('comprador')
     return render(request, 'tienda/compras/compra_producto.html', {'formulario': formulario})
 def listado_informe(request):
+    """Vista de listado de informe"""
     return render(request, 'tienda/informes/informes.html', {})
 
 def informes_productos_marca(request):
+    """Vista de listado de por marca"""
     marca = request.GET.get('marca')
+    # Si la marca existe creamos un formulario propio nuestro de Marca y devolvemos el formulario y los productos cuya#
+    #marca coincida#
     if marca:
         formulario = MarcaForm(request.GET)
         productos = Producto.objects.all().filter(marca=marca)
         contexto = {'productos':productos, 'formulario':formulario}
-    else:
+    else: #Formulario vacio#
         formulario = MarcaForm()
         contexto = {'formulario': formulario}
     return render(request, 'tienda/informes/productos_marca.html', contexto)
 
 def informes_productos_usuario(request):
-    username = request.GET.get('user')
-    if username:
+    """Vista de listado de productos por usuario"""
+    username = request.GET.get('user') #Capturamos al usuario#
+    if username: #Si el usuario existe muestra nuestro formulario persona para buscar por persona aquellas compras
+        #realizadas por ese usuario#
         formulario = PersonaForm(request.GET)
-        compras = Compra.objects.all().filter(user=request.user)
+        compras = Compra.objects.all().filter(user=username)
         contexto = {'compras':compras, 'formulario':formulario}
     else:
         formulario = PersonaForm()
@@ -95,11 +104,40 @@ def informes_productos_usuario(request):
     return render(request, 'tienda/informes/compras_usuario.html', contexto)
 
 def informes_topten_vendidos(request):
-    productos = Producto.objects.annotate(sum_ventas=Sum('compra__unidades'),
-                                          sum_importes=Sum('compra__importe')).order_by('-sum_ventas')[:10]
-    return render(request, 'tienda/informes/productos_topten_vendidos.html', {'productos':productos})
+    productos = Producto.objects.all()
+    unidadesvendidas = Compra.objects.values('producto').annotate(importe_total=Sum('importe'),unidades_vendidas=Sum('unidades')).order_by('-unidades_vendidas')[:10]
+
+    return render(request, 'tienda/informes/productos_topten_vendidos.html', {'productos':productos,'unidadesvendidas':unidadesvendidas})
 
 def informes_topten_clientes(request):
     clientes = User.objects.annotate(importe_compras=Sum('compra__importe'),
                                           total_compra=Count('compra')).order_by('-importe_compras')[:10]
-    return render(request, 'tienda/informes/topten_mejores_clientes.html', {'clientes':clientes})
+    reccompras= Compra.objects.values('user').annotate(sum_compras=Sum('importe'))
+    return render(request, 'tienda/informes/topten_mejores_clientes.html', {'clientes':clientes, "recompras":reccompras})
+
+def crear_usuario(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('listado')
+    form = UserCreationForm()
+    return render(request, "tienda/registro.html", {"register_form":form})
+
+def iniciar_sesion(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request,user)
+                return redirect("welcome")
+            else:
+                messages.error(request,"error en el inicio de sesion")
+        else:
+                messages.error(request, "Fallo en el inicio de sesion")
+    form = AuthenticationForm()
+    return render(request, "tienda/iniciar_sesion.html",{"login_form":form})

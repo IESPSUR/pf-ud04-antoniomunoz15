@@ -6,28 +6,25 @@
             <thead>
                 <tr>
                     <th>Producto</th>
-                    <th>Fecha</th>
-                    <th>Importe</th>
-                    <th>Unidades</th>
+                    <th>Unidades Vendidas</th>
+                     <th>Total</th>
                 </tr>
             </thead>
             <tbody>
-            {% for producto in productos %}
-                 <tr>
-                    <td>
-                        {{ producto.nombre }}
-                    </td>
-                    <td>
-                        {{ producto.modelo }}
-                    </td>
-                    <td>
-                        {{ producto.marca }}
-                    </td>
-                    <td>
-                        {{ producto.unidades }}
-                    </td>
+            {% for unidades in unidadesvendidas %}
+                <tr>
                      <td>
-                        {{ producto.precio }}
+                         {% for prod in productos %}
+                             {% if prod.id == unidades.producto %}
+                                {{ prod.nombre }}
+                             {% endif %}
+                         {% endfor %}
+                    </td>
+                    <td>
+                            {{ unidades.unidades_vendidas }}
+                    </td>
+                    <td>
+                            {{ unidades.importe_total }}€
                     </td>
                 </tr>
             {% endfor %}

@@ -16,4 +16,6 @@ urlpatterns = [
     path('tienda/informes/compras_usuario', views.informes_productos_usuario, name='compra_usuario'),
     path('tienda/informes/productos_topten', views.informes_topten_vendidos, name='informe_topten_producto'),
     path('tienda/informes/top_clientes', views.informes_topten_clientes, name='informe_topten_clientes'),
+    path('tienda/registro', views.crear_usuario, name='registro'),
+    path('tienda/login', views.iniciar_sesion, name='iniciosesion'),
 ]
