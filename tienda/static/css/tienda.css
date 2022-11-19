@@ -1,10 +1,36 @@
-a {
-        text-decoration: none;
-        color: black;
-      }
-a:hover{
-  background-color: silver;
+body{
+    background-image: url("https://png.pngtree.com/thumb_back/fw800/background/20220428/pngtree-design-of-web-page-vector-image_1105245.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
-h1{
-  font-size: 4em;
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+    font-size: 0.8em;
+}
+
+
+
+.page-header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.titulo{
+    flex-basis: 80%;
+    display: flex;
+    justify-content: center;
+}
+
+.menu{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 20px;
 }

@@ -17,6 +17,7 @@ from django.contrib import  messages
 # Create your views here.
 def welcome(request):
     return render(request, 'tienda/index.html', {})
+@staff_member_required
 def listado(request):
     productos= Producto.objects.all()
     return render(request, 'tienda/listado.html', {'productos': productos})
@@ -72,6 +73,7 @@ def realizar_compra(request, id):
                 raise ValidationError('No hay suficientes unidades')
             return redirect('comprador')
     return render(request, 'tienda/compras/compra_producto.html', {'formulario': formulario})
+@staff_member_required
 def listado_informe(request):
     """Vista de listado de informe"""
     return render(request, 'tienda/informes/informes.html', {})
@@ -110,9 +112,8 @@ def informes_topten_vendidos(request):
     return render(request, 'tienda/informes/productos_topten_vendidos.html', {'productos':productos,'unidadesvendidas':unidadesvendidas})
 
 def informes_topten_clientes(request):
-    clientes = User.objects.annotate(importe_compras=Sum('compra__importe'),
-                                          total_compra=Count('compra')).order_by('-importe_compras')[:10]
-    reccompras= Compra.objects.values('user').annotate(sum_compras=Sum('importe'))
+    clientes = User.objects.all()
+    reccompras= Compra.objects.values('user').annotate(sum_compras=Sum('importe')).order_by('-sum_compras')[:10]
     return render(request, 'tienda/informes/topten_mejores_clientes.html', {'clientes':clientes, "recompras":reccompras})
 
 def crear_usuario(request):
@@ -131,13 +132,14 @@ def iniciar_sesion(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
+
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request,user)
                 return redirect("welcome")
             else:
-                messages.error(request,"error en el inicio de sesion")
+                return render(request, "tienda/iniciar_sesion.html", {"login_form":form})
         else:
-                messages.error(request, "Fallo en el inicio de sesion")
+            return render(request, "tienda/iniciar_sesion.html", {"login_form":form})
     form = AuthenticationForm()
     return render(request, "tienda/iniciar_sesion.html",{"login_form":form})
