@@ -124,7 +124,7 @@ def crear_usuario(request):
             login(request, user)
             return redirect('listado')
     form = UserCreationForm()
-    return render(request, "tienda/registro.html", {"register_form":form})
+    return render(request, "tienda/control_usuarios/registro.html", {"register_form":form})
 
 def iniciar_sesion(request):
     if request.method == "POST":
@@ -138,8 +138,8 @@ def iniciar_sesion(request):
                 login(request,user)
                 return redirect("welcome")
             else:
-                return render(request, "tienda/iniciar_sesion.html", {"login_form":form})
+                return render(request, "tienda/control_usuarios/iniciar_sesion.html", {"login_form":form})
         else:
-            return render(request, "tienda/iniciar_sesion.html", {"login_form":form})
+            return render(request, "tienda/control_usuarios/iniciar_sesion.html", {"login_form":form})
     form = AuthenticationForm()
-    return render(request, "tienda/iniciar_sesion.html",{"login_form":form})
+    return render(request, "tienda/control_usuarios/iniciar_sesion.html", {"login_form":form})
