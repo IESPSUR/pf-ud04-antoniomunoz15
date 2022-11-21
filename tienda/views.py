@@ -106,27 +106,32 @@ def informes_productos_usuario(request):
     return render(request, 'tienda/informes/compras_usuario.html', contexto)
 
 def informes_topten_vendidos(request):
-    productos = Producto.objects.all()
+    """Vista de listado de productos mas vendido por unidades"""
+    productos = Producto.objects.all() #Consulta para sacar los productos mas vendidos haciendo un recuento de las unidades de un producto en concreto
     unidadesvendidas = Compra.objects.values('producto').annotate(importe_total=Sum('importe'),unidades_vendidas=Sum('unidades')).order_by('-unidades_vendidas')[:10]
 
     return render(request, 'tienda/informes/productos_topten_vendidos.html', {'productos':productos,'unidadesvendidas':unidadesvendidas})
 
 def informes_topten_clientes(request):
-    clientes = User.objects.all()
+    """Vista de listado de clientes que mas se han gastado en la tienda"""
+    clientes = User.objects.all() #Consulta para sacar los cliente que mas han gastado haciendo un recuento del importe que se ha gastado un usuario en concreto
     reccompras= Compra.objects.values('user').annotate(sum_compras=Sum('importe')).order_by('-sum_compras')[:10]
     return render(request, 'tienda/informes/topten_mejores_clientes.html', {'clientes':clientes, "recompras":reccompras})
 
 def crear_usuario(request):
-    if request.method == "POST":
+    """Vista para registrar un usuario"""
+    if request.method == "POST": #Nos traemos
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('listado')
+            messages.add_message(request, messages.INFO, "Registrado")
+            return redirect('welcome')
     form = UserCreationForm()
     return render(request, "tienda/control_usuarios/registro.html", {"register_form":form})
 
 def iniciar_sesion(request):
+    """Vista para iniciar sesion"""
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
